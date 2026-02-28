@@ -1,0 +1,12 @@
+diff --git a/pubspec.yaml b/pubspec.yaml
+index 0acf786..a304d4a 100644
+--- a/pubspec.yaml
++++ b/pubspec.yaml
+@@ -71,6 +71,7 @@ dev_dependencies:
+   drift_dev: ^2.14.0
+ 
+ dependency_overrides:
++  analyzer: 8.3.0
+   auto_updater_windows:
+     git:
+       url: https://github.com/edde746/auto_updater

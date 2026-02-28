@@ -1,0 +1,242 @@
+id: com.edde746.plezy
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+  #- org.freedesktop.Sdk.Extension.llvm21
+command: plezy
+add-extensions:
+  org.freedesktop.Platform.VAAPI.Intel:
+    directory: lib/intel-vaapi-driver
+    version: '25.08'
+    autodelete: false
+    no-autodownload: true
+  org.freedesktop.Platform.GL:
+    directory: lib/GL
+    version: '25.08'
+    versions: 25.08;1.4
+    subdirectories: true
+    no-autodownload: true
+    autodelete: false
+    add-ld-path: lib
+    merge-dirs: vulkan/icd.d;glvnd/egl_vendor.d;egl/egl_external_platform.d;OpenCL/vendors;lib/dri;lib/d3d;vulkan/explicit_layer.d;vulkan/implicit_layer.d
+    download-if: active-gl-driver
+    enable-if: active-gl-driver
+finish-args:
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --socket=pulseaudio
+  - --socket=system-bus
+  - --share=network
+  - --share=ipc
+  - --device=all
+modules:
+  - name: keybinder
+    cleanup:
+      - /lib/*.la
+      - /include
+      - /share
+      - /lib/pkgconfig
+    sources:
+      - type: archive
+        only_arches:
+          - x86_64
+        url: https://github.com/kupferlauncher/keybinder/releases/download/keybinder-3.0-v0.3.2/keybinder-3.0-0.3.2.tar.gz
+        sha256: e6e3de4e1f3b201814a956ab8f16dfc8a262db1937ff1eee4d855365398c6020
+  - name: mpv
+    buildsystem: meson
+    config-opts:
+      - -Dlibmpv=true
+      - -Dcplayer=false
+      - -Dbuild-date=false
+      - -Dmanpage-build=disabled
+      - -Dvaapi=enabled
+      - -Ddrm=enabled
+      - -Degl=enabled
+      - -Degl-drm=enabled
+      - -Dcuda-hwaccel=enabled
+      - -Dpulse=enabled
+      - -Dalsa=enabled
+      - -Duchardet=enabled
+      - --libdir=lib
+    sources:
+      - type: git
+        url: https://github.com/mpv-player/mpv.git
+        tag: v0.41.0
+        commit: 41f6a645068483470267271e1d09966ca3b9f413
+        x-checker-data:
+          type: git
+          tag-pattern: ^v([\d.]+)$
+    modules:
+      - name: hwdata
+        buildsystem: simple
+        build-commands:
+          - ./configure --prefix=/app --libdir=/app/lib --datadir=/app/share
+          - make install
+        sources:
+          - type: git
+            url: https://github.com/vcrhonek/hwdata.git
+            tag: v0.403
+            commit: bb56be59220b34d79160b73bd24eb36952dc8c63
+      - name: libdisplay-info
+        buildsystem: meson
+        config-opts:
+          - --libdir=lib
+        sources:
+          - type: git
+            url: https://gitlab.freedesktop.org/emersion/libdisplay-info.git
+            tag: 0.3.0
+            commit: 47a5590e9c4eb35d67651b8c05a55f1a48259329
+      - name: cargo-c
+        sources:
+          - type: archive
+            url: https://github.com/lu-zero/cargo-c/releases/download/v0.10.20/cargo-c-x86_64-unknown-linux-musl.tar.gz
+            sha256: 4f886fda551b9105efe6e0abae0f9f0d76da2b7faccf8db2b15f3b680841b3e4
+            strip-components: 0
+        buildsystem: simple
+        build-commands:
+          - install -Dm755 cargo-cinstall /app/bin/cargo-cinstall
+          - ln -sf /app/bin/cargo-cinstall /app/bin/cargo-c
+      - name: libdovi
+        buildsystem: simple
+        build-options:
+          append-path: /usr/lib/sdk/rust-stable/bin
+          env:
+            CARGO_HOME: /run/build/libdovi/cargo
+        sources:
+          - type: git
+            url: https://github.com/quietvoid/dovi_tool.git
+            tag: libdovi-3.3.2
+            commit: 4fd2b2235c9f93582dd4a00e65ee34a07800afd7
+          - cargo-sources/libdovi/libdovi-3.3.2.cargo-sources.json
+        build-commands:
+          - cd dolby_vision && cargo cinstall --release --features capi --prefix=/app
+            --libdir=/app/lib --frozen
+      - name: ffnvcodec
+        buildsystem: simple
+        build-commands:
+          - make install PREFIX=/app
+        sources:
+          - type: git
+            url: https://github.com/FFmpeg/nv-codec-headers.git
+            tag: n13.0.19.0
+            commit: e844e5b26f46bb77479f063029595293aa8f812d
+            x-checker-data:
+              type: git
+              tag-pattern: ^n([\d.]+)$
+      - name: ffmpeg
+        cleanup:
+          - /share/ffmpeg/examples
+        config-opts:
+          - --enable-shared
+          - --disable-static
+          - --enable-gnutls
+          - --disable-doc
+          - --disable-programs
+          - --disable-encoders
+          - --disable-muxers
+          - --enable-encoder=png
+          - --enable-vaapi
+          - --enable-vdpau
+          - --enable-libdrm
+          - --enable-ffnvcodec
+          - --enable-nvdec
+        sources:
+          - type: archive
+            url: https://ffmpeg.org/releases/ffmpeg-8.0.1.tar.xz
+            sha256: 05ee0b03119b45c0bdb4df654b96802e909e0a752f72e4fe3794f487229e5a41
+      - name: fribidi
+        buildsystem: meson
+        sources:
+          - type: archive
+            url: https://github.com/fribidi/fribidi/releases/download/v1.0.16/fribidi-1.0.16.tar.xz
+            sha256: 1b1cde5b235d40479e91be2f0e88a309e3214c8ab470ec8a2744d82a5a9ea05c
+      - name: libass
+        config-opts:
+          - --disable-static
+        sources:
+          - type: archive
+            url: https://github.com/libass/libass/releases/download/0.17.4/libass-0.17.4.tar.xz
+            sha256: 78f1179b838d025e9c26e8fef33f8092f65611444ffa1bfc0cfac6a33511a05a
+      - name: uchardet
+        buildsystem: cmake-ninja
+        config-opts:
+          - -DCMAKE_BUILD_TYPE=Release
+          - -DBUILD_STATIC=0
+          - -DCMAKE_INSTALL_LIBDIR=lib
+          - -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+        cleanup:
+          - /share/man
+        sources:
+          - type: archive
+            url: https://www.freedesktop.org/software/uchardet/releases/uchardet-0.0.8.tar.xz
+            sha256: e97a60cfc00a1c147a674b097bb1422abd9fa78a2d9ce3f3fdcc2e78a34ac5f0
+      - name: libplacebo
+        buildsystem: meson
+        config-opts:
+          - -Dvulkan=enabled
+          - -Dshaderc=enabled
+          - -Dlibdovi=enabled
+          - -Ddemos=false
+          - -Dc_args=-fvisibility=hidden
+          - --libdir=lib
+        sources:
+          - type: git
+            url: https://code.videolan.org/videolan/libplacebo.git
+            tag: v7.360.0
+            commit: b2ea27dceb6418aabfe9121174c6dbb232942998
+            x-checker-data:
+              type: git
+              tag-pattern: ^v([\d.]+)$
+  - name: libevdev
+    buildsystem: meson
+    config-opts:
+      - --libdir=lib
+      - -Dtests=disabled
+    sources:
+      - type: git
+        url: https://gitlab.freedesktop.org/libevdev/libevdev.git
+        tag: libevdev-1.13.6
+        commit: 139b58e135184f66a35c2401771f3d8134f097ad
+  - name: plezy
+    buildsystem: simple
+    build-options:
+      append-path: /var/lib/flutter/bin:/usr/lib/sdk/llvm21/bin
+      prepend-ld-library-path: /usr/lib/sdk/llvm21/lib
+      env:
+        PUB_CACHE: /run/build/plezy/.pub-cache
+        CXX: clang++
+        CC: clang
+    build-commands:
+      - dart run build_runner build --delete-conflicting-outputs
+      - flutter build linux --release --no-pub --verbose
+      - mkdir -p /app/lib/intel-vaapi-driver
+      - mkdir -p /app/lib/GL
+      - mkdir -p /app/bin
+      - mkdir -p /app/opt && cp -r build/linux/x64/release/bundle /app/opt/plezy
+      - |
+        cat > /app/bin/plezy << EOF
+        #!/bin/bash
+        cd /app/opt/plezy
+        exec ./plezy "$@"
+        EOF
+      - chmod +x /app/bin/plezy
+      - install -Dm644 com.edde746.plezy.desktop /app/share/applications/com.edde746.plezy.desktop
+      - install -Dm644 com.edde746.plezy.metainfo.xml /app/share/metainfo/com.edde746.plezy.metainfo.xml
+      - install -Dm644 com.edde746.plezy.svg /app/share/icons/hicolor/scalable/apps/com.edde746.plezy.svg
+    sources:
+      - type: git
+        url: https://github.com/edde746/plezy.git
+        tag: 1.22.0
+        commit: 0449be7aa0b237be83723c71164ae1f89ad0d9ff
+      - type: dir
+        path: ./extra/
+      - type: patch
+        path: patches/plezy-analyzer.patch
+      - type: patch
+        path: patches/plezy-Wno-error.patch
+      - type: git
+        url: https://github.com/flutter/flutter.git
+        tag: 3.41.2
+        dest: flutter

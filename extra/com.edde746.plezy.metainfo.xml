@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.edde746.plezy</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-only</project_license>
+  <name>Plezy</name>
+  <summary>Modern cross-platform Plex client</summary>
+  <description>
+    <p>
+      Plezy is a modern, open-source client for Plex Media Server. It features a clean 
+      interface built with Flutter and uses MPV for powerful media playback.
+    </p>
+    <p>Key features include:</p>
+    <ul>
+      <li><strong>Authentication:</strong> Sign in with Plex, automatic server discovery, and persistent sessions.</li>
+      <li><strong>Media Browsing:</strong> Browse libraries with rich metadata, collections, and playlists.</li>
+      <li><strong>Playback:</strong> Wide codec support (HEVC, AV1, VP9), HDR and Dolby Vision support, and full subtitle compatibility.</li>
+      <li><strong>Downloads:</strong> Download media for offline viewing with background queue management.</li>
+      <li><strong>Watch Together:</strong> Synchronized playback with friends.</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">com.edde746.plezy.desktop</launchable>
+  <url type="homepage">https://github.com/edde746/plezy</url>
+  <url type="bugtracker">https://github.com/edde746/plezy/issues</url>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/edde746/plezy/main/screenshots/desktop/home.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/edde746/plezy/main/screenshots/desktop/player.png</image>
+    </screenshot>
+  </screenshots>
+  <releases>
+    <release version="1.22.0" date="2026-02-28"/>
+  </releases>
+  <content_rating type="oars-1.1"/>
+</component>

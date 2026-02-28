@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Plezy
+Comment=Modern cross-platform Plex client
+Exec=plezy
+Icon=com.edde746.plezy
+Terminal=false
+Type=Application
+Categories=AudioVideo;Video;Player;TV;
+Keywords=Plex;Media;Streaming;Player;
+StartupNotify=true
