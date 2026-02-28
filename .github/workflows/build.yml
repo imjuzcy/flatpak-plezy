@@ -1,0 +1,77 @@
+name: Build Flatpak
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - '*'
+
+permissions:
+  contents: write
+
+env:
+  LIBDOVI_VERSION: 3.3.2
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak flatpak-builder pipx
+          sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+      - name: Set up Poetry
+        run: pipx install poetry
+
+      - name: Clone external repositories
+        run: |
+          git clone https://github.com/flatpak/flatpak-builder-tools.git /tmp/flatpak-builder-tools
+          git clone --branch libdovi-${{ env.LIBDOVI_VERSION }} https://github.com/quietvoid/dovi_tool.git /tmp/dovi_tool
+          git clone https://github.com/TheAppgineer/flatpak-flutter.git /tmp/flatpak-flutter
+
+      - name: Generate cargo sources for libdovi
+        run: |
+          mkdir -p cargo-sources/libdovi
+          cd /tmp/flatpak-builder-tools/cargo
+          poetry install
+          poetry run python3 flatpak-cargo-generator.py \
+            /tmp/dovi_tool/dolby_vision/Cargo.lock \
+            -o $GITHUB_WORKSPACE/cargo-sources/libdovi/libdovi-${{ env.LIBDOVI_VERSION }}.cargo-sources.json
+
+      - name: Prepare Flutter build with flatpak-flutter
+        run: |
+          cd /tmp/flatpak-flutter
+          poetry install
+          VENV_PATH=$(poetry env info --path)
+          cd $GITHUB_WORKSPACE
+          $VENV_PATH/bin/python3 /tmp/flatpak-flutter/flatpak-flutter.py flatpak.yml
+
+      - name: Build Flatpak
+        run: >
+          flatpak-builder --force-clean --sandbox --user
+          --install-deps-from=flathub --repo=./repo --install
+          build com.edde746.plezy.yml
+
+      - name: Build Flatpak bundle
+        run: |
+          mkdir -p release
+          flatpak build-bundle -vv ./repo ./release/com.edde746.plezy.flatpak com.edde746.plezy
+
+      - name: Upload Flatpak bundle as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: com.edde746.plezy.flatpak
+          path: release/com.edde746.plezy.flatpak
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/com.edde746.plezy.flatpak
