@@ -1,0 +1,88 @@
+--- a/linux/runner/my_application.cc
++++ b/linux/runner/my_application.cc
+@@ -1,6 +1,9 @@
+ #include "my_application.h"
+ 
+ #include <flutter_linux/flutter_linux.h>
++#include <gio/gio.h>
++#include <string.h>
++
+ #ifdef GDK_WINDOWING_X11
+ #include <gdk/gdkx.h>
+ #endif
+@@ -15,8 +18,75 @@ struct _MyApplication {
+ 
+ G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
+ 
++// Check the org.freedesktop.appearance color-scheme portal preference.
++// Returns TRUE if the desktop prefers a dark color scheme.
++// This is the modern standard used by GNOME 42+, KDE Plasma 5.24+, etc.
++static gboolean desktop_prefers_dark(void) {
++  g_autoptr(GDBusProxy) proxy = g_dbus_proxy_new_for_bus_sync(
++      G_BUS_TYPE_SESSION,
++      G_DBUS_PROXY_FLAGS_NONE,
++      nullptr,
++      "org.freedesktop.portal.Desktop",
++      "/org/freedesktop/portal/desktop",
++      "org.freedesktop.portal.Settings",
++      nullptr,
++      nullptr);
++  if (proxy == nullptr) {
++    return FALSE;
++  }
++
++  g_autoptr(GVariant) result = g_dbus_proxy_call_sync(
++      proxy,
++      "Read",
++      g_variant_new("(ss)", "org.freedesktop.appearance", "color-scheme"),
++      G_DBUS_CALL_FLAGS_NONE,
++      -1,
++      nullptr,
++      nullptr);
++  if (result == nullptr) {
++    return FALSE;
++  }
++
++  // The return type is (v), containing a variant that wraps a uint32.
++  // color-scheme: 0 = no preference, 1 = prefer dark, 2 = prefer light
++  g_autoptr(GVariant) outer = nullptr;
++  g_variant_get(result, "(v)", &outer);
++  if (outer == nullptr) {
++    return FALSE;
++  }
++
++  g_autoptr(GVariant) inner = nullptr;
++  if (g_variant_is_of_type(outer, G_VARIANT_TYPE_VARIANT)) {
++    inner = g_variant_get_variant(outer);
++  } else {
++    inner = g_variant_ref(outer);
++  }
++
++  if (inner != nullptr && g_variant_is_of_type(inner, G_VARIANT_TYPE_UINT32)) {
++    guint32 scheme = g_variant_get_uint32(inner);
++    return scheme == 1;  // 1 = prefer dark
++  }
++  return FALSE;
++}
++
+ // Implements GApplication::activate.
+ static void my_application_activate(GApplication* application) {
++  // Ensure GTK knows the dark theme preference.  On GNOME 42+ the
++  // gtk-application-prefer-dark-theme property may not be set even when the
++  // user has selected a dark color scheme via the portal.  Query the
++  // freedesktop color-scheme portal and propagate the preference to GTK
++  // so the native GtkHeaderBar follows the system theme.
++  GtkSettings* gtk_settings = gtk_settings_get_default();
++  if (gtk_settings != nullptr) {
++    gboolean prefer_dark = FALSE;
++    g_object_get(gtk_settings, "gtk-application-prefer-dark-theme",
++                 &prefer_dark, nullptr);
++    if (!prefer_dark && desktop_prefers_dark()) {
++      g_object_set(gtk_settings, "gtk-application-prefer-dark-theme", TRUE,
++                   nullptr);
++    }
++  }
++
+   MyApplication* self = MY_APPLICATION(application);
+   GtkWindow* window =
+       GTK_WINDOW(gtk_application_window_new(GTK_APPLICATION(application)));
