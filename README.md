@@ -2,6 +2,8 @@
 
 Flatpak packaging repository for [Plezy](https://github.com/edde746/plezy), a Plex client.
 
+Note: Copilot is used in this repository. I (the human) check and verify the code proposed by Copilot thoroughly before merging, but if you oppose Copilot being used at all, this repository might not be for you.
+
 ## Contents
 
 - `flatpak.yml`: Flatpak manifest and module definitions.
