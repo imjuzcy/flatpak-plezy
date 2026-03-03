@@ -217,8 +217,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/edde746/plezy.git
-        tag: 1.22.0
-        commit: 0449be7aa0b237be83723c71164ae1f89ad0d9ff
+        tag: 1.23.0
+        commit: eae40938e09d2e3e2c7e0177cad59abc1621199c
       - type: dir
         path: ./extra/
       - type: patch
