@@ -32,6 +32,19 @@ finish-args:
   - --share=ipc
   - --device=all
   - --talk-name=org.freedesktop.ScreenSaver
+cleanup:
+  - /bin/cargo-c
+  - /bin/cargo-cinstall
+  - /include
+  - /lib/pkgconfig
+  - /share/aclocal
+  - /share/doc
+  - /share/gtk-doc
+  - /share/info
+  - /share/man
+  - /share/pkgconfig
+  - '*.a'
+  - '*.la'
 modules:
   - name: mpv
     buildsystem: meson
@@ -46,7 +59,7 @@ modules:
       - -Degl-drm=enabled
       - -Dcuda-hwaccel=enabled
       - -Dpulse=enabled
-      - -Dalsa=enabled
+      - -Dalsa=disabled
       - -Duchardet=enabled
       - --libdir=lib
     sources:
