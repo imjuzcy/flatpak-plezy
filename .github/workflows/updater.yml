@@ -1,0 +1,63 @@
+name: Check Upstream for Updates
+
+on:
+  schedule:
+    - cron: '0 */3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate stub manifest
+        run: |
+          mkdir -p cargo-sources/libdovi
+          cat << 'EOF' > cargo-sources/libdovi/libdovi.cargo-sources.json
+          {}
+          EOF
+
+      - name: Run flatpak-external-data-checker (Edit Only)
+        uses: docker://ghcr.io/flathub/flatpak-external-data-checker:latest
+        with:
+          args: --edit-only flatpak.yml
+
+      - name: Branch, Commit, and Trigger Build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if the checker actually changed anything
+          if git diff --quiet flatpak.yml; then
+            echo "No updates found. Exiting."
+            exit 0
+          fi
+
+          VERSION_TAG=$(yq -r '.modules.[] | select(.name =="plezy") | .sources.[] | select(.type=="git" and (.url | match("edde746/plezy.git"))) | .tag' flatpak.yml)
+          BRANCH_NAME="plezy-${VERSION_TAG}"
+
+          BRANCH_EXISTS=$(git ls-remote --heads origin "$BRANCH_NAME")
+          if [ -n "$BRANCH_EXISTS" ]; then
+            echo "Branch '$BRANCH_NAME' already exists on remote. A PR or build is likely already in progress. Exiting."
+            exit 0
+          fi
+
+          # Setup Git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Create branch, commit, and push
+          git checkout -b "$BRANCH_NAME"
+          git add flatpak.yml
+          git commit -m "Update Plezy to ${VERSION_TAG}"
+          git push -u origin "$BRANCH_NAME"
+
+          # Manually trigger the build workflow on the new branch, 
+          # passing the version tag as an input so the build workflow can use it later.
+          # Note: 'build.yml' must match the filename of your build workflow.
+          gh workflow run build.yml --ref "$BRANCH_NAME" -f version_tag="$VERSION_TAG"

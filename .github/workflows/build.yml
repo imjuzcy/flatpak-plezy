@@ -43,7 +43,7 @@ jobs:
           poetry install
           poetry run python3 flatpak-cargo-generator.py \
             /tmp/dovi_tool/dolby_vision/Cargo.lock \
-            -o $GITHUB_WORKSPACE/cargo-sources/libdovi/libdovi-${{ env.LIBDOVI_VERSION }}.cargo-sources.json
+            -o $GITHUB_WORKSPACE/cargo-sources/libdovi/libdovi.cargo-sources.json
 
       - name: Prepare Flutter build with flatpak-flutter
         run: |

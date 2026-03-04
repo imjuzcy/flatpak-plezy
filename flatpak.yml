@@ -111,7 +111,7 @@ modules:
             url: https://github.com/quietvoid/dovi_tool.git
             tag: libdovi-3.3.2
             commit: 4fd2b2235c9f93582dd4a00e65ee34a07800afd7
-          - cargo-sources/libdovi/libdovi-3.3.2.cargo-sources.json
+          - cargo-sources/libdovi/libdovi.cargo-sources.json
         build-commands:
           - cd dolby_vision && cargo cinstall --release --features capi --prefix=/app
             --libdir=/app/lib --frozen
