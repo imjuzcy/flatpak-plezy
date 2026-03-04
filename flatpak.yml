@@ -232,6 +232,9 @@ modules:
         url: https://github.com/edde746/plezy.git
         tag: 1.23.0
         commit: eae40938e09d2e3e2c7e0177cad59abc1621199c
+        x-checker-data:
+          type: git
+          tag-pattern: ^([\d]+\.[\d]+\.[\d]+)$
       - type: dir
         path: ./extra/
       - type: patch
