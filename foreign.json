@@ -1,0 +1,22 @@
+{
+    "sentry_flutter": {
+        "manifest": {
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/getsentry/sentry-native.git",
+                    "tag": "0.12.8",
+                    "dest": "$APP/build/linux/x64/release/_deps/sentry-native-src",
+                    "disable-submodules": false
+                },
+                {
+                    "type": "shell",
+                    "commands": [
+                        "mkdir -p $APP/build/linux/x64/release/_deps/sentry-native-subbuild",
+                        "touch $APP/build/linux/x64/release/_deps/sentry-native-subbuild/sentry-native-populate-complete"
+                    ]
+                }
+            ]
+        }
+    }
+}
