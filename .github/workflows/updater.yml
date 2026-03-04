@@ -60,4 +60,4 @@ jobs:
           # Manually trigger the build workflow on the new branch, 
           # passing the version tag as an input so the build workflow can use it later.
           # Note: 'build.yml' must match the filename of your build workflow.
-          gh workflow run build.yml --ref "$BRANCH_NAME" -f version_tag="$VERSION_TAG"
+          gh workflow run build.yml --ref "$BRANCH_NAME"
