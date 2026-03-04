@@ -12,8 +12,8 @@
                 {
                     "type": "shell",
                     "commands": [
-                        "mkdir -p $APP/build/linux/x64/release/_deps/sentry-native-subbuild",
-                        "touch $APP/build/linux/x64/release/_deps/sentry-native-subbuild/sentry-native-populate-complete"
+                        "mkdir -p build/linux/x64/release/_deps/sentry-native-subbuild",
+                        "touch build/linux/x64/release/_deps/sentry-native-subbuild/sentry-native-populate-complete"
                     ]
                 }
             ]
