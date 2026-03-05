@@ -5,7 +5,7 @@
                 {
                     "type": "git",
                     "url": "https://github.com/getsentry/sentry-native.git",
-                    "tag": "0.12.8",
+                    "tag": "0.7.20",
                     "dest": "$APP/build/linux/x64/release/_deps/sentry-native-src",
                     "disable-submodules": false
                 },
