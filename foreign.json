@@ -5,14 +5,8 @@
                 {
                     "type": "git",
                     "url": "https://github.com/getsentry/sentry-native.git",
-                    "tag": "0.12.8",
+                    "tag": "0.7.20",
                     "dest": "sentry-native-src"
-                },
-                {
-                    "type": "shell",
-                    "commands": [
-                        "sed -i '1s/^/set(FETCHCONTENT_FULLY_DISCONNECTED ON)\\nset(FETCHCONTENT_SOURCE_DIR_SENTRY-NATIVE \"${CMAKE_SOURCE_DIR}\\/..\\/..\\/..\\/..\\/..\\/..\\/sentry-native-src\")\\n/' .pub-cache/hosted/pub.dev/sentry_flutter-8.14.2/sentry-native/sentry-native.cmake"
-                    ]
                 }
             ]
         }
