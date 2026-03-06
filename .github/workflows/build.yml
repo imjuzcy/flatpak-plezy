@@ -75,3 +75,32 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: release/com.edde746.plezy.flatpak
+
+      - name: Checkout flatpaks repository
+        uses: actions/checkout@v4
+        with:
+          repository: imjuzcy/flatpaks
+          token: ${{ secrets.FLATPAKS_REPO_TOKEN }}
+          path: flatpaks-repo
+
+      - name: Import GPG Key
+        run: |
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
+
+      - name: Import bundle and sign repository
+        run: |
+          cd flatpaks-repo
+          if [ ! -d "repo" ]; then
+            ostree init --mode=archive-z2 --repo=repo
+          fi
+          flatpak build-import-bundle --gpg-sign=${{ secrets.GPG_KEY_ID }} repo ../release/com.edde746.plezy.flatpak
+          flatpak build-update-repo --generate-static-deltas --gpg-sign=${{ secrets.GPG_KEY_ID }} repo
+
+      - name: Commit and push to flatpaks
+        run: |
+          cd flatpaks-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add repo/
+          git commit -m "Update and sign com.edde746.plezy Flatpak" || echo "No changes to commit"
+          git push
