@@ -47,6 +47,11 @@ jobs:
             exit 0
           fi
 
+          # Update metadata
+          sudo apt-get update
+          sudo apt-get install -y xmlstarlet
+          xmlstarlet ed -L -u 'component/releases/release/@version' -v ${VERSION_TAG} -u 'component/releases/release/@date' -v $(date +%Y-%m-%d) extra/com.edde746.plezy.metainfo.xml
+
           # Setup Git
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
