@@ -93,8 +93,8 @@ jobs:
           if [ ! -d "repo" ]; then
             ostree init --mode=archive-z2 --repo=repo
           fi
-          flatpak build-import-bundle --gpg-sign=${{ secrets.GPG_KEY_ID }} repo ../release/com.edde746.plezy.flatpak
-          flatpak build-update-repo --generate-static-deltas --gpg-sign=${{ secrets.GPG_KEY_ID }} repo
+          flatpak build-import-bundle --gpg-sign="${{ secrets.GPG_KEY_ID }}" repo ../release/com.edde746.plezy.flatpak
+          flatpak build-update-repo --generate-static-deltas --gpg-sign="${{ secrets.GPG_KEY_ID }}" repo
 
       - name: Commit and push to flatpaks
         run: |
