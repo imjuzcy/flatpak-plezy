@@ -90,9 +90,7 @@ jobs:
       - name: Import bundle and sign repository
         run: |
           cd flatpaks-repo
-          if [ ! -d "repo" ]; then
-            ostree init --mode=archive-z2 --repo=repo
-          fi
+          ostree init --mode=archive-z2 --repo=repo
           flatpak build-import-bundle --gpg-sign="${{ secrets.GPG_KEY_ID }}" repo ../release/com.edde746.plezy.flatpak
           flatpak build-update-repo --generate-static-deltas --gpg-sign="${{ secrets.GPG_KEY_ID }}" repo
 
