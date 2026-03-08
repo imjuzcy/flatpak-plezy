@@ -266,8 +266,6 @@ modules:
       - type: dir
         path: ./extra/
       - type: patch
-        path: patches/plezy-analyzer.patch
-      - type: patch
         path: patches/plezy-Wno-error.patch
       - type: patch
         path: patches/fix-linux-titlebar-theme.patch
