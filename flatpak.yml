@@ -241,7 +241,6 @@ modules:
         CXX: clang++
         CC: clang
     build-commands:
-      - dart run build_runner build --delete-conflicting-outputs
       - flutter build linux --release --no-pub --verbose
       - mkdir -p /app/lib/intel-vaapi-driver
       - mkdir -p /app/lib/GL
