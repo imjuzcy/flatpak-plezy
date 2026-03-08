@@ -230,8 +230,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/edde746/plezy.git
-        tag: 1.24.1
-        commit: a009c6db93acdafd80b428a251622ae3361f4ca5
+        tag: 1.25.0
+        commit: ff6e3ee92a5e18c457ee8324f98896ea4edfb7b1
         x-checker-data:
           type: git
           tag-pattern: ^([\d]+\.[\d]+\.[\d]+)$
