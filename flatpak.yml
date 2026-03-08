@@ -241,6 +241,9 @@ modules:
         CXX: clang++
         CC: clang
     build-commands:
+      - sed -i '1s|^|set(FETCHCONTENT_FULLY_DISCONNECTED ON)\nset(FETCHCONTENT_SOURCE_DIR_SIMDUTF
+        "${CMAKE_CURRENT_SOURCE_DIR}/simdutf_local")\nset(FETCHCONTENT_SOURCE_DIR_SQLITE3
+        "${CMAKE_CURRENT_SOURCE_DIR}/sqlite3_local")\n|' linux/CMakeLists.txt
       - flutter build linux --release --no-pub --verbose
       - mkdir -p /app/lib/intel-vaapi-driver
       - mkdir -p /app/lib/GL
@@ -264,6 +267,24 @@ modules:
         x-checker-data:
           type: git
           tag-pattern: ^([\d]+\.[\d]+\.[\d]+)$
+      - type: archive
+        url: https://github.com/simdutf/simdutf/releases/download/v8.1.0/singleheader.zip
+        sha256: c3565a8567b21d0096d0366654db473597ea6e5408e464198dce0897be71e4d0
+        dest: linux/simdutf_local
+        x-checker-data:
+          type: json
+          url: https://api.github.com/repos/simdutf/simdutf/releases/latest
+          version-query: .tag_name | sub("^v"; "")
+          url-query: .assets[] | select(.name=="singleheader.zip") | .browser_download_url
+      - type: archive
+        url: https://sqlite.org/2026/sqlite-autoconf-3520000.tar.gz
+        sha256: f6b50b0c103392af32a8be15b2b9d25959de9a00a70c3979128aafeaa5338b3f
+        dest: linux/sqlite3_local
+        x-checker-data:
+          type: html
+          url: https://sqlite.org/download.html
+          version-pattern: (20\d{2}/sqlite-autoconf-\d+)\.tar\.gz
+          url-template: https://sqlite.org/$version.tar.gz
       - type: dir
         path: ./extra/
       - type: patch
@@ -272,5 +293,9 @@ modules:
         path: patches/fix-linux-titlebar-theme.patch
       - type: git
         url: https://github.com/flutter/flutter.git
-        tag: 3.41.2
+        tag: 3.41.4
         dest: flutter
+        x-checker-data:
+          type: git
+          tag-pattern: ^([\d]+\.[\d]+\.[\d]+)$
+        commit: ff37bef603469fb030f2b72995ab929ccfc227f0
