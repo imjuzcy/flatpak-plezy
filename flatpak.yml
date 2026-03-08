@@ -163,6 +163,8 @@ modules:
               tag-pattern: ^n([\d.]+)$
       - name: fribidi
         buildsystem: meson
+        config-opts:
+          - -Ddocs=false
         sources:
           - type: git
             url: https://github.com/fribidi/fribidi.git
