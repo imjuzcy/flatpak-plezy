@@ -1,16 +1,19 @@
-name: Build Flatpak
+name: Build and Deploy Flatpak
 
 on:
-  workflow_dispatch:
   push:
-    tags:
-      - '*'
+    branches: [ main ]
+    tags: [ '*' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
   build:
+    name: Build Flatpak
     runs-on: ubuntu-latest
 
     steps:
@@ -66,6 +69,28 @@ jobs:
         with:
           name: com.edde746.plezy.flatpak
           path: release/com.edde746.plezy.flatpak
+
+  deploy:
+    name: Deploy and Sign Flatpak
+    needs: build
+    # Restrict deployment to merges/pushes to main, tag creation, or manual triggers
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak
+
+      - name: Download Flatpak bundle artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: com.edde746.plezy.flatpak
+          path: release
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
