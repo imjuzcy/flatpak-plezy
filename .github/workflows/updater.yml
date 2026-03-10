@@ -47,22 +47,16 @@ jobs:
             exit 0
           fi
 
-          # Update metadata
           sudo apt-get update
           sudo apt-get install -y xmlstarlet
           xmlstarlet ed -L -u 'component/releases/release/@version' -v ${VERSION_TAG} -u 'component/releases/release/@date' -v $(date +%Y-%m-%d) extra/com.edde746.plezy.metainfo.xml
 
-          # Setup Git
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Create branch, commit, and push
           git checkout -b "$BRANCH_NAME"
-          git add flatpak.yml
+          git add flatpak.yml extra/com.edde746.plezy.metainfo.xml
           git commit -m "Update Plezy to ${VERSION_TAG}"
           git push -u origin "$BRANCH_NAME"
 
-          # Manually trigger the build workflow on the new branch, 
-          # passing the version tag as an input so the build workflow can use it later.
-          # Note: 'build.yml' must match the filename of your build workflow.
           gh workflow run build.yml --ref "$BRANCH_NAME"
