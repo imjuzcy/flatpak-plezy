@@ -268,8 +268,8 @@ modules:
           type: git
           tag-pattern: ^([\d]+\.[\d]+\.[\d]+)$
       - type: archive
-        url: https://github.com/simdutf/simdutf/releases/download/v8.1.0/singleheader.zip
-        sha256: c3565a8567b21d0096d0366654db473597ea6e5408e464198dce0897be71e4d0
+        url: https://github.com/simdutf/simdutf/releases/download/v8.2.0/singleheader.zip
+        sha256: dce5756f20c03202ad48de43ff306629f7e0dd2bed204dfa2967ea13fcab296e
         dest: linux/simdutf_local
         x-checker-data:
           type: json
