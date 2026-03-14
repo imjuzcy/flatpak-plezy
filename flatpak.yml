@@ -213,8 +213,8 @@ modules:
         sources:
           - type: git
             url: https://code.videolan.org/videolan/libplacebo.git
-            tag: v7.360.0
-            commit: b2ea27dceb6418aabfe9121174c6dbb232942998
+            tag: v7.360.1
+            commit: cee9b076f2c63104ccfd497fa79c39a867293ec4
             x-checker-data:
               type: git
               tag-pattern: ^v([\d.]+)$
@@ -262,14 +262,14 @@ modules:
     sources:
       - type: git
         url: https://github.com/edde746/plezy.git
-        tag: 1.26.1
-        commit: 98138a4f3582a98d081e726535ef4ec72f41852a
+        tag: 1.27.1
+        commit: 642c49b1ea45a0f2676b34df26ecffc8e749b019
         x-checker-data:
           type: git
           tag-pattern: ^([\d]+\.[\d]+\.[\d]+)$
       - type: archive
-        url: https://github.com/simdutf/simdutf/releases/download/v8.1.0/singleheader.zip
-        sha256: c3565a8567b21d0096d0366654db473597ea6e5408e464198dce0897be71e4d0
+        url: https://github.com/simdutf/simdutf/releases/download/v8.2.0/singleheader.zip
+        sha256: dce5756f20c03202ad48de43ff306629f7e0dd2bed204dfa2967ea13fcab296e
         dest: linux/simdutf_local
         x-checker-data:
           type: json
@@ -277,8 +277,8 @@ modules:
           version-query: .tag_name | sub("^v"; "")
           url-query: .assets[] | select(.name=="singleheader.zip") | .browser_download_url
       - type: archive
-        url: https://sqlite.org/2026/sqlite-autoconf-3520000.tar.gz
-        sha256: f6b50b0c103392af32a8be15b2b9d25959de9a00a70c3979128aafeaa5338b3f
+        url: https://sqlite.org/2026/sqlite-autoconf-3510300.tar.gz
+        sha256: 81f5be397049b0cae1b167f2225af7646fc0f82e4a9b3c48c9ea3a533e21d77a
         dest: linux/sqlite3_local
         x-checker-data:
           type: html
