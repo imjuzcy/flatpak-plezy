@@ -28,18 +28,20 @@ jobs:
         uses: docker://ghcr.io/flathub/flatpak-external-data-checker:latest
         with:
           args: --edit-only flatpak.yml
+        continue-on-error: true
 
       - name: Branch, Commit, and Create PR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Check if the checker actually changed anything
-          if git diff --quiet flatpak.yml; then
-            echo "No updates found. Exiting."
+          # Check if there are actually updates to Plezy
+          if cmp --silent <(git show HEAD:flatpak.yml | yq '.modules.[] | select(.name =="plezy") | .sources.[] | select(.type=="git" and (.url | test("edde746/plezy")))') \
+                          <(yq '.modules.[] | select(.name =="plezy") | .sources.[] | select(.type=="git" and (.url | test("edde746/plezy")))' flatpak.yml); then
+            echo "No updates to Plezy found. Exiting."
             exit 0
           fi
 
-          VERSION_TAG=$(yq -r '.modules.[] | select(.name =="plezy") | .sources.[] | select(.type=="git" and (.url | match("edde746/plezy.git"))) | .tag' flatpak.yml)
+          VERSION_TAG=$(yq -r '.modules.[] | select(.name =="plezy") | .sources.[] | select(.type=="git" and (.url | test("edde746/plezy"))) | .tag' flatpak.yml)
           BRANCH_NAME="plezy-${VERSION_TAG}"
 
           BRANCH_EXISTS=$(git ls-remote --heads origin "$BRANCH_NAME")
