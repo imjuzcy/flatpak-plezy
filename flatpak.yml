@@ -156,8 +156,8 @@ modules:
         sources:
           - type: git
             url: https://git.ffmpeg.org/ffmpeg.git
-            tag: n8.0.1
-            commit: 894da5ca7d742e4429ffb2af534fcda0103ef593
+            tag: n8.1
+            commit: 9047fa1b084f76b1b4d065af2d743df1b40dfb56
             x-checker-data:
               type: git
               tag-pattern: ^n([\d.]+)$
@@ -262,8 +262,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/edde746/plezy.git
-        tag: 1.27.2
-        commit: 9efdd5a17d98baba283aafb3d4bddbe14448edde
+        tag: 1.28.0
+        commit: edb2120f98d5256d547946906f9fa7e0d4f9d338
         x-checker-data:
           type: git
           tag-pattern: ^([\d]+\.[\d]+\.[\d]+)$
@@ -293,9 +293,9 @@ modules:
         path: patches/fix-linux-titlebar-theme.patch
       - type: git
         url: https://github.com/flutter/flutter.git
-        tag: 3.41.4
+        tag: 3.41.5
         dest: flutter
         x-checker-data:
           type: git
           tag-pattern: ^([\d]+\.[\d]+\.[\d]+)$
-        commit: ff37bef603469fb030f2b72995ab929ccfc227f0
+        commit: 2c9eb20739dfec95e2c74bd3dfa4601b0a8a36aa
