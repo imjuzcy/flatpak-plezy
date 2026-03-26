@@ -50,11 +50,16 @@ jobs:
       - name: Prepare Flutter build with flatpak-flutter
         run: |
           cd /tmp/flatpak-flutter
-          git checkout tags/0.13.0
           poetry install
           VENV_PATH=$(poetry env info --path)
           cd $GITHUB_WORKSPACE
           $VENV_PATH/bin/python3 /tmp/flatpak-flutter/flatpak-flutter.py flatpak.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -f com.edde746.plezy.yml
+          git add -f generated/*
+          git commit -m 'commit processed manifest'
+          git push
 
       - name: Build Flatpak
         run: >
