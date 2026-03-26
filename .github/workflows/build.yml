@@ -50,6 +50,7 @@ jobs:
       - name: Prepare Flutter build with flatpak-flutter
         run: |
           cd /tmp/flatpak-flutter
+          git checkout tags/0.13.0
           poetry install
           VENV_PATH=$(poetry env info --path)
           cd $GITHUB_WORKSPACE
