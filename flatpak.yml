@@ -241,6 +241,10 @@ modules:
         CXX: clang++
         CC: clang
     build-commands:
+      - find -name pubspec.lock -exec sha256sum {} \;
+      - sed -i '1s|^|set(FETCHCONTENT_FULLY_DISCONNECTED ON)\nset(FETCHCONTENT_SOURCE_DIR_SIMDUTF
+        "${CMAKE_CURRENT_SOURCE_DIR}/simdutf_local")\nset(FETCHCONTENT_SOURCE_DIR_SQLITE3
+        "${CMAKE_CURRENT_SOURCE_DIR}/sqlite3_local")\n|' linux/CMakeLists.txt
       - flutter build linux --release --no-pub --verbose
       - mkdir -p /app/lib/intel-vaapi-driver
       - mkdir -p /app/lib/GL
@@ -284,6 +288,10 @@ modules:
           url-template: https://sqlite.org/$version.tar.gz
       - type: dir
         path: ./extra/
+      - type: patch
+        paths:
+          - patches/plezy-Wno-error.patch
+          - patches/plezy-sentry-jni.patch
       - type: git
         url: https://github.com/flutter/flutter.git
         tag: 3.41.5
@@ -292,3 +300,10 @@ modules:
           type: git
           tag-pattern: ^([\d]+\.[\d]+\.[\d]+)$
         commit: 2c9eb20739dfec95e2c74bd3dfa4601b0a8a36aa
+      - type: git
+        url: https://github.com/getsentry/sentry-dart
+        branch: deps/jni-0.15.x
+        dest: .pub-cache/git/cache/sentry-dart-d2e5a49a8157d89dd8d65b4fda7493e4eddb7331
+        commit: ea3f876b55060b1c0ed2d4ae8f42cc18d3a7a581
+      - type: file
+        path: ./pubspec.lock

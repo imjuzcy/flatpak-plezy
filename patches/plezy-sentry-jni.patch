@@ -1,0 +1,17 @@
+diff --git a/pubspec.yaml b/pubspec.yaml
+index 5bca2ed..663bd2d 100644
+--- a/pubspec.yaml
++++ b/pubspec.yaml
+@@ -54,7 +54,11 @@ dependencies:
+   flutter_svg: ^2.2.3
+   mobile_scanner: ^7.2.0
+   background_downloader: ^9.5.2
+-  sentry_flutter: ^9.15.0
++  sentry_flutter:
++    git:
++      url: https://github.com/getsentry/sentry-dart
++      ref: deps/jni-0.15.x
++      path: packages/flutter
+   auto_updater:
+     git:
+       url: https://github.com/edde746/auto_updater

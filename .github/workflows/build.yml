@@ -2,7 +2,9 @@ name: Build and Deploy Flatpak
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - dev
     tags: [ '*' ]
     paths-ignore:
       - '.github/**'
@@ -25,7 +27,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y flatpak flatpak-builder pipx yq
+          sudo apt-get install -y flatpak flatpak-builder pipx yq openjdk-25-jdk
           sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
           flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
@@ -47,6 +49,16 @@ jobs:
             /tmp/dovi_tool/dolby_vision/Cargo.lock \
             -o $GITHUB_WORKSPACE/cargo-sources/libdovi/libdovi.cargo-sources.json
 
+      - name: Regenerate pubspec.lock
+        run: |
+          curl https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.41.6-stable.tar.xz | tar -xJ -C /tmp/
+          git clone https://github.com/edde746/plezy /tmp/plezy
+          cd /tmp/plezy
+          git apply --verbose $GITHUB_WORKSPACE/patches/plezy-sentry-jni.patch
+          /tmp/flutter/bin/flutter pub get
+          cp pubspec.lock $GITHUB_WORKSPACE/
+          sha256sum $GITHUB_WORKSPACE/pubspec.lock
+
       - name: Prepare Flutter build with flatpak-flutter
         run: |
           cd /tmp/flatpak-flutter
@@ -56,12 +68,6 @@ jobs:
           $VENV_PATH/bin/python3 /tmp/flatpak-flutter/flatpak-flutter.py flatpak.yml
           cp ./patches/sqlite3_flutter_libs-0.5.42-CMakeLists.txt.patch ./generated/patches/sqlite3_flutter_libs/0.5.42-CMakeLists.txt.patch
           sed -i 's|generated/patches/sqlite3_flutter_libs/0.5.41-CMakeLists.txt.patch|generated/patches/sqlite3_flutter_libs/0.5.42-CMakeLists.txt.patch|g' ./generated/sources/pubspec.json
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -f com.edde746.plezy.yml
-          git add -f generated/*
-          git commit -m 'commit processed manifest'
-          git push
 
       - name: Build Flatpak
         run: >
