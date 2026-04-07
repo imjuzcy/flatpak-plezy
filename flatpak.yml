@@ -289,8 +289,6 @@ modules:
         path: ./extra/
       - type: patch
         path: patches/plezy-Wno-error.patch
-      - type: patch
-        path: patches/fix-linux-titlebar-theme.patch
       - type: git
         url: https://github.com/flutter/flutter.git
         tag: 3.41.5
