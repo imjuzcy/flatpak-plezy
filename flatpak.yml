@@ -79,8 +79,8 @@ modules:
         sources:
           - type: git
             url: https://github.com/vcrhonek/hwdata.git
-            tag: v0.405
-            commit: be46d7186e918e62eb75de399e800145a781c8db
+            tag: v0.406
+            commit: 9ae3b9da5cbb93eed30f812aa7edb4b9ad3e3868
             x-checker-data:
               type: git
               tag-pattern: ^v([\d.]+)$
@@ -262,8 +262,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/edde746/plezy.git
-        tag: 1.28.0
-        commit: edb2120f98d5256d547946906f9fa7e0d4f9d338
+        tag: 1.31.2
+        commit: f08989cc9987fb34e40cb34a9c2b4880fbe0035a
         x-checker-data:
           type: git
           tag-pattern: ^([\d]+\.[\d]+\.[\d]+)$
@@ -293,9 +293,9 @@ modules:
         path: patches/fix-linux-titlebar-theme.patch
       - type: git
         url: https://github.com/flutter/flutter.git
-        tag: 3.41.5
+        tag: 3.41.6
         dest: flutter
         x-checker-data:
           type: git
           tag-pattern: ^([\d]+\.[\d]+\.[\d]+)$
-        commit: 2c9eb20739dfec95e2c74bd3dfa4601b0a8a36aa
+        commit: db50e20168db8fee486b9abf32fc912de3bc5b6a
