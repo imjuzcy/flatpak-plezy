@@ -6,7 +6,19 @@
                     "type": "git",
                     "url": "https://github.com/getsentry/sentry-native.git",
                     "tag": "0.13.3",
-                    "dest": "/run/build/plezy/build/linux/x64/release/_deps/sentry-native-src"
+                    "dest": "sentry-native-src"
+                },
+                {
+                    "type": "shell",
+                    "commands": [
+                        "ls -lah .pub-cache",
+                        "ls -lah .pub-cache/hosted",
+                        "ls -lah .pub-cache/hosted/pub.dev",
+                        "find .pub-cache/hosted/pub.dev/ -type d -name sentry-native",
+                        "find .pub-cache/hosted/pub.dev/ -type f -name sentry-native.cmake",
+                        "find .pub-cache/hosted/pub.dev/ -type f -name '*.cmake'",
+                        "#SENTRY_CMAKE=$(find .pub-cache/hosted/pub.dev/sentry_flutter-*/sentry-native/sentry-native.cmake 2>/dev/null | head -1) && sed -i '1s|^|set(FETCHCONTENT_FULLY_DISCONNECTED ON)\\nset(FETCHCONTENT_SOURCE_DIR_SENTRY-NATIVE \"/run/build/plezy/sentry-native-src\")\\n|' \"$SENTRY_CMAKE\""
+                    ]
                 }
             ]
         }
