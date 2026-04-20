@@ -241,10 +241,6 @@ modules:
         CXX: clang++
         CC: clang
     build-commands:
-      - find -name pubspec.lock -exec sha256sum {} \;
-      - sed -i '1s|^|set(FETCHCONTENT_FULLY_DISCONNECTED ON)\nset(FETCHCONTENT_SOURCE_DIR_SIMDUTF
-        "${CMAKE_CURRENT_SOURCE_DIR}/simdutf_local")\nset(FETCHCONTENT_SOURCE_DIR_SQLITE3
-        "${CMAKE_CURRENT_SOURCE_DIR}/sqlite3_local")\n|' linux/CMakeLists.txt
       - flutter build linux --release --no-pub --verbose
       - mkdir -p /app/lib/intel-vaapi-driver
       - mkdir -p /app/lib/GL
