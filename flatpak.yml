@@ -235,12 +235,16 @@ modules:
   - name: plezy
     buildsystem: simple
     build-options:
-      append-path: /var/lib/flutter/bin:/usr/lib/sdk/llvm21/bin
-      prepend-ld-library-path: /usr/lib/sdk/llvm21/lib
+      append-path: /var/lib/flutter/bin:/usr/lib/sdk/llvm21/bin:/usr/lib/sdk/openjdk25/jvm/openjdk-25/bin
+      prepend-ld-library-path: /usr/lib/sdk/llvm21/lib:/usr/lib/sdk/openjdk25/jvm/openjdk-25/lib/server:/usr/lib/sdk/openjdk25/jvm/openjdk-25/lib
       env:
         PUB_CACHE: /run/build/plezy/.pub-cache
         CXX: clang++
         CC: clang
+        JAVA_HOME: /usr/lib/sdk/openjdk25/jvm/openjdk-25
+        JDK_HOME: /usr/lib/sdk/openjdk25/jvm/openjdk-25
+        CMAKE_INCLUDE_PATH: /usr/lib/sdk/openjdk25/jvm/openjdk-25/include:/usr/lib/sdk/openjdk25/jvm/openjdk-25/include/linux
+        CMAKE_LIBRARY_PATH: /usr/lib/sdk/openjdk25/jvm/openjdk-25/lib/server:/usr/lib/sdk/openjdk25/jvm/openjdk-25/lib
     build-commands:
       - sed -i '1s|^|set(FETCHCONTENT_FULLY_DISCONNECTED ON)\nset(FETCHCONTENT_SOURCE_DIR_SIMDUTF
         "${CMAKE_CURRENT_SOURCE_DIR}/simdutf_local")\nset(FETCHCONTENT_SOURCE_DIR_SQLITE3
