@@ -5,6 +5,7 @@ sdk: org.gnome.Sdk
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.rust-stable
   - org.freedesktop.Sdk.Extension.llvm21
+  - org.freedesktop.Sdk.Extension.openjdk25
 command: plezy
 add-extensions:
   org.freedesktop.Platform.VAAPI.Intel:
@@ -241,11 +242,10 @@ modules:
         CXX: clang++
         CC: clang
     build-commands:
-      - find -name pubspec.lock -exec sha256sum {} \;
       - sed -i '1s|^|set(FETCHCONTENT_FULLY_DISCONNECTED ON)\nset(FETCHCONTENT_SOURCE_DIR_SIMDUTF
         "${CMAKE_CURRENT_SOURCE_DIR}/simdutf_local")\nset(FETCHCONTENT_SOURCE_DIR_SQLITE3
         "${CMAKE_CURRENT_SOURCE_DIR}/sqlite3_local")\n|' linux/CMakeLists.txt
-      - flutter build linux --release --no-pub --verbose
+      - flutter build linux --release --no-pub --verbose --dart-define=ENABLE_UPDATE_CHECK=false --dart-define=ENABLE_SENTRY=false
       - mkdir -p /app/lib/intel-vaapi-driver
       - mkdir -p /app/lib/GL
       - mkdir -p /app/bin
@@ -289,7 +289,8 @@ modules:
       - type: dir
         path: ./extra/
       - type: patch
-        path: patches/plezy-Wno-error.patch
+        paths:
+          - patches/plezy-Wno-error.patch
       - type: git
         url: https://github.com/flutter/flutter.git
         tag: 3.41.7
