@@ -2,7 +2,9 @@ name: Build and Deploy Flatpak
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - dev
     tags: [ '*' ]
     paths-ignore:
       - '.github/**'
@@ -25,7 +27,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y flatpak flatpak-builder pipx yq
+          sudo apt-get install -y flatpak flatpak-builder pipx yq openjdk-25-jdk
           sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
           flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
@@ -54,6 +56,8 @@ jobs:
           VENV_PATH=$(poetry env info --path)
           cd $GITHUB_WORKSPACE
           $VENV_PATH/bin/python3 /tmp/flatpak-flutter/flatpak-flutter.py flatpak.yml
+          cp ./patches/sqlite3_flutter_libs-0.5.42-CMakeLists.txt.patch ./generated/patches/sqlite3_flutter_libs/0.5.42-CMakeLists.txt.patch
+          sed -i 's|generated/patches/sqlite3_flutter_libs/0.5.41-CMakeLists.txt.patch|generated/patches/sqlite3_flutter_libs/0.5.42-CMakeLists.txt.patch|g' ./generated/sources/pubspec.json
 
       - name: Build Flatpak
         run: >
