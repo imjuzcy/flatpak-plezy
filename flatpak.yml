@@ -245,6 +245,51 @@ modules:
       - sed -i '1s|^|set(FETCHCONTENT_FULLY_DISCONNECTED ON)\nset(FETCHCONTENT_SOURCE_DIR_SIMDUTF
         "${CMAKE_CURRENT_SOURCE_DIR}/simdutf_local")\nset(FETCHCONTENT_SOURCE_DIR_SQLITE3
         "${CMAKE_CURRENT_SOURCE_DIR}/sqlite3_local")\n|' linux/CMakeLists.txt
+      - |
+        set -euxo pipefail
+        echo "===== ENV (JAVA/JDK/CMAKE/PATH) ====="
+        env | grep -E '^(JAVA|JDK|CMAKE|PATH|LD_LIBRARY_PATH|LIBRARY_PATH)=' || true
+        echo "===== PATH RESOLUTION ====="
+        command -v java || true
+        command -v javac || true
+        command -v cmake || true
+        command -v pkg-config || true
+        echo "===== JAVA VERSION ====="
+        java -version || true
+        javac -version || true
+        echo "===== JAVA_HOME CANDIDATES ====="
+        for d in \
+          "${JAVA_HOME:-}" \
+          /usr/lib/sdk/openjdk* \
+          /usr/lib/jvm \
+          /app/jdk \
+          /usr/lib/sdk/openjdk*/jvm/openjdk* \
+        ; do
+          [ -n "$d" ] || continue
+          ls -ld $d 2>/dev/null || true
+        done
+        echo "===== JNI HEADERS SEARCH ====="
+        find /usr /app -type f \( -name jni.h -o -name jni_md.h \) 2>/dev/null | head -200 || true
+        echo "===== JVM LIB SEARCH ====="
+        find /usr /app -type f \( -name 'libjvm.so' -o -name 'libjawt.so' \) 2>/dev/null | head -200 || true
+        echo "===== CMAKE JNI PROBE ====="
+        cat > /tmp/CMakeLists.txt <<'EOF'
+        cmake_minimum_required(VERSION 3.16)
+        project(jni_probe C CXX)
+        set(CMAKE_FIND_DEBUG_MODE ON)
+        find_package(JNI REQUIRED)
+        message(STATUS "JNI_FOUND=${JNI_FOUND}")
+        message(STATUS "JAVA_INCLUDE_PATH=${JAVA_INCLUDE_PATH}")
+        message(STATUS "JAVA_INCLUDE_PATH2=${JAVA_INCLUDE_PATH2}")
+        message(STATUS "JAVA_JVM_LIBRARY=${JAVA_JVM_LIBRARY}")
+        EOF
+        cmake -S /tmp -B /tmp/jni-probe \
+          -DCMAKE_BUILD_TYPE=Release \
+          ${JAVA_HOME:+-DJAVA_HOME="${JAVA_HOME}"} \
+          || true
+        echo "===== CMAKE JNI PROBE CACHE ====="
+        [ -f /tmp/jni-probe/CMakeCache.txt ] && \
+          grep -E 'JNI|JAVA_' /tmp/jni-probe/CMakeCache.txt || true
       - flutter build linux --release --no-pub --verbose --dart-define=ENABLE_UPDATE_CHECK=false --dart-define=ENABLE_SENTRY=false
       - mkdir -p /app/lib/intel-vaapi-driver
       - mkdir -p /app/lib/GL
