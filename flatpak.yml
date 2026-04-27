@@ -249,7 +249,8 @@ modules:
       - sed -i '1s|^|set(FETCHCONTENT_FULLY_DISCONNECTED ON)\nset(FETCHCONTENT_SOURCE_DIR_SIMDUTF
         "${CMAKE_CURRENT_SOURCE_DIR}/simdutf_local")\nset(FETCHCONTENT_SOURCE_DIR_SQLITE3
         "${CMAKE_CURRENT_SOURCE_DIR}/sqlite3_local")\n|' linux/CMakeLists.txt
-      - flutter build linux --release --no-pub --verbose --dart-define=ENABLE_UPDATE_CHECK=false --dart-define=ENABLE_SENTRY=false
+      - flutter build linux --release --no-pub --verbose --dart-define=ENABLE_UPDATE_CHECK=false
+        --dart-define=ENABLE_SENTRY=false
       - mkdir -p /app/lib/intel-vaapi-driver
       - mkdir -p /app/lib/GL
       - mkdir -p /app/bin
@@ -267,14 +268,14 @@ modules:
     sources:
       - type: git
         url: https://github.com/edde746/plezy.git
-        tag: 1.34.2
-        commit: 87215d9e7b69332607cc5b6e1a45be81a3367a85
+        tag: 1.35.0
+        commit: 6bd203f60640c727c692788b0b9d2e564eef948a
         x-checker-data:
           type: git
           tag-pattern: ^([\d]+\.[\d]+\.[\d]+)$
       - type: archive
-        url: https://github.com/simdutf/simdutf/releases/download/v8.2.0/singleheader.zip
-        sha256: dce5756f20c03202ad48de43ff306629f7e0dd2bed204dfa2967ea13fcab296e
+        url: https://github.com/simdutf/simdutf/releases/download/v9.0.0/singleheader.zip
+        sha256: c47c68cd51025ec66509bc36215b4c4f1f0f0a98129139ee55c541531b652526
         dest: linux/simdutf_local
         x-checker-data:
           type: json
