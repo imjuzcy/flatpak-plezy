@@ -80,8 +80,8 @@ modules:
         sources:
           - type: git
             url: https://github.com/vcrhonek/hwdata.git
-            tag: v0.406
-            commit: 9ae3b9da5cbb93eed30f812aa7edb4b9ad3e3868
+            tag: v0.407
+            commit: a9bbe4d8619e9a73dc433db2d2afceda8cbeae10
             x-checker-data:
               type: git
               tag-pattern: ^v([\d.]+)$
@@ -157,8 +157,8 @@ modules:
         sources:
           - type: git
             url: https://git.ffmpeg.org/ffmpeg.git
-            tag: n8.1
-            commit: 9047fa1b084f76b1b4d065af2d743df1b40dfb56
+            tag: n8.1.1
+            commit: 239f2c733de417201d7ad3b3b8b0d9b63285b2b1
             x-checker-data:
               type: git
               tag-pattern: ^n([\d.]+)$
@@ -268,8 +268,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/edde746/plezy.git
-        tag: 1.35.2
-        commit: 617bf64105579cca851eaa803c65a900b4891b45
+        tag: 2.1.1
+        commit: 93f0da7a27480df2e915bbb83082af52d24bbb05
         x-checker-data:
           type: git
           tag-pattern: ^([\d]+\.[\d]+\.[\d]+)$
@@ -283,8 +283,8 @@ modules:
           version-query: .tag_name | sub("^v"; "")
           url-query: .assets[] | select(.name=="singleheader.zip") | .browser_download_url
       - type: archive
-        url: https://sqlite.org/2026/sqlite-autoconf-3530000.tar.gz
-        sha256: 851e9b38192fe2ceaa65e0baa665e7fa06230c3d9bd1a6a9662d02380d73365a
+        url: https://sqlite.org/2026/sqlite-autoconf-3530100.tar.gz
+        sha256: 83e6b2020a034e9a7ad4a72feea59e1ad52f162e09cbd26735a3ffb98359fc4f
         dest: linux/sqlite3_local
         x-checker-data:
           type: html
@@ -298,9 +298,9 @@ modules:
           - patches/plezy-Wno-error.patch
       - type: git
         url: https://github.com/flutter/flutter.git
-        tag: 3.41.8
+        tag: 3.41.9
         dest: flutter
         x-checker-data:
           type: git
           tag-pattern: ^([\d]+\.[\d]+\.[\d]+)$
-        commit: 02085feb3f5d8a8156e5e28512b9d99351d510c0
+        commit: 00b0c91f06209d9e4a41f71b7a512d6eb3b9c694
