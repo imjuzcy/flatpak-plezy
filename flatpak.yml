@@ -256,7 +256,7 @@ modules:
       - mkdir -p /app/bin
       - mkdir -p /app/opt && cp -r build/linux/x64/release/bundle /app/opt/plezy
       - |
-        cat > /app/bin/plezy << EOF
+        cat > /app/bin/plezy << 'EOF'
         #!/bin/bash
         cd /app/opt/plezy
         exec ./plezy "$@"
