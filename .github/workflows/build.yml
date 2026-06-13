@@ -18,7 +18,19 @@ permissions:
 jobs:
   build:
     name: Build Flatpak
-    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        arch:
+          - x86-64
+          - aarch64
+        include:
+          - arch: x86-64
+            runner: ubuntu-latest
+
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
 
     steps:
       - name: Checkout repository
@@ -68,13 +80,13 @@ jobs:
       - name: Build Flatpak bundle
         run: |
           mkdir -p release
-          flatpak build-bundle -vv ./repo ./release/com.edde746.plezy.flatpak com.edde746.plezy
+          flatpak build-bundle -vv ./repo ./release/com.edde746.plezy-${{ matrix.arch }}.flatpak com.edde746.plezy
 
       - name: Upload Flatpak bundle as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: com.edde746.plezy.flatpak
-          path: release/com.edde746.plezy.flatpak
+          name: com.edde746.plezy-${{ matrix.arch }}.flatpak
+          path: release/com.edde746.plezy-${{ matrix.arch }}.flatpak
 
   deploy:
     name: Deploy and Sign Flatpak
@@ -95,14 +107,22 @@ jobs:
       - name: Download Flatpak bundle artifact
         uses: actions/download-artifact@v4
         with:
-          name: com.edde746.plezy.flatpak
-          path: release
+          name: com.edde746.plezy-x86-64.flatpak
+          path: release-x86
+
+      - name: Download Flatpak bundle artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: com.edde746.plezy-aarch64.flatpak
+          path: release-aarch64
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: release/com.edde746.plezy.flatpak
+          files: |
+            release-x86/com.edde746.plezy-x86-64.flatpak
+            release-aarch64/com.edde746.plezy-aarch64.flatpak
 
       - name: Checkout flatpaks repository
         uses: actions/checkout@v4
@@ -118,7 +138,8 @@ jobs:
       - name: Import bundle and sign repository
         run: |
           cd flatpaks-repo
-          flatpak build-import-bundle --gpg-sign="${{ secrets.GPG_KEY_ID }}" repo ../release/com.edde746.plezy.flatpak
+          flatpak build-import-bundle --gpg-sign="${{ secrets.GPG_KEY_ID }}" repo ../release-x86/com.edde746.plezy-x86-64.flatpak
+          flatpak build-import-bundle --gpg-sign="${{ secrets.GPG_KEY_ID }}" repo ../release-aarch64/com.edde746.plezy-aarch64.flatpak
           flatpak build-update-repo --generate-static-deltas --gpg-sign="${{ secrets.GPG_KEY_ID }}" repo
 
       - name: Commit and push to flatpaks
