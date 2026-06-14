@@ -80,8 +80,8 @@ modules:
         sources:
           - type: git
             url: https://github.com/vcrhonek/hwdata.git
-            tag: v0.407
-            commit: a9bbe4d8619e9a73dc433db2d2afceda8cbeae10
+            tag: v0.408
+            commit: 4456b256a1a5b1d1c1c1a60a9f69c59f7743c522
             x-checker-data:
               type: git
               tag-pattern: ^v([\d.]+)$
@@ -268,8 +268,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/edde746/plezy.git
-        tag: 2.4.1
-        commit: 7c38668a51d74cbd7e39ee31f978bdb3ca8d1f83
+        tag: 2.7.0
+        commit: 06bd9d775dcae9f8475e47d841aaba226b6a293d
         x-checker-data:
           type: git
           tag-pattern: ^([\d]+\.[\d]+\.[\d]+)$
@@ -283,8 +283,8 @@ modules:
           version-query: .tag_name | sub("^v"; "")
           url-query: .assets[] | select(.name=="singleheader.zip") | .browser_download_url
       - type: archive
-        url: https://sqlite.org/2026/sqlite-autoconf-3530100.tar.gz
-        sha256: 83e6b2020a034e9a7ad4a72feea59e1ad52f162e09cbd26735a3ffb98359fc4f
+        url: https://sqlite.org/2026/sqlite-autoconf-3530200.tar.gz
+        sha256: 588ad51949419a56ebe81fe56193d510c559eb94c9a57748387860b5d3069316
         dest: linux/sqlite3_local
         x-checker-data:
           type: html
@@ -298,9 +298,9 @@ modules:
           - patches/plezy-Wno-error.patch
       - type: git
         url: https://github.com/flutter/flutter.git
-        tag: 3.44.0
+        tag: 3.44.2
         dest: flutter
         x-checker-data:
           type: git
           tag-pattern: ^([\d]+\.[\d]+\.[\d]+)$
-        commit: 559ffa3f75e7402d65a8def9c28389a9b2e6fe42
+        commit: c9a6c484230f8b5e408ec57be1ef71dee1e77020
