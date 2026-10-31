@@ -247,8 +247,18 @@ modules:
         CMAKE_LIBRARY_PATH: /usr/lib/sdk/openjdk25/jvm/openjdk-25/lib/server:/usr/lib/sdk/openjdk25/jvm/openjdk-25/lib
     build-commands:
       - sed -i '1s|^|set(FETCHCONTENT_FULLY_DISCONNECTED ON)\nset(FETCHCONTENT_SOURCE_DIR_SIMDUTF
-        "${CMAKE_CURRENT_SOURCE_DIR}/simdutf_local")\nset(FETCHCONTENT_SOURCE_DIR_SQLITE3
-        "${CMAKE_CURRENT_SOURCE_DIR}/sqlite3_local")\n|' linux/CMakeLists.txt
+        "${CMAKE_CURRENT_SOURCE_DIR}/simdutf_local")\n|' linux/CMakeLists.txt
+      # The sqlite3 Dart package (3.x) uses a native-assets build hook that downloads
+      # a prebuilt library by default. Compile it from the bundled amalgamation instead.
+      - |
+        cat >> pubspec.yaml << 'EOF'
+
+        hooks:
+          user_defines:
+            sqlite3:
+              source: source
+              path: linux/sqlite3_local/sqlite3.c
+        EOF
       - flutter build linux --release --no-pub --verbose --dart-define=ENABLE_UPDATE_CHECK=false
         --dart-define=ENABLE_SENTRY=false
       - mkdir -p /app/lib/intel-vaapi-driver
