@@ -1,7 +1,7 @@
 id: com.edde746.plezy
-runtime: org.gnome.Platform
-runtime-version: '50'
-sdk: org.gnome.Sdk
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.rust-stable
   - org.freedesktop.Sdk.Extension.llvm21
@@ -24,15 +24,34 @@ add-extensions:
     merge-dirs: vulkan/icd.d;glvnd/egl_vendor.d;egl/egl_external_platform.d;OpenCL/vendors;lib/dri;lib/d3d;vulkan/explicit_layer.d;vulkan/implicit_layer.d
     download-if: active-gl-driver
     enable-if: active-gl-driver
+# Matches upstream's linux/packaging/flatpak/com.edde746.plezy.json.
 finish-args:
-  - --socket=fallback-x11
-  - --socket=wayland
-  - --socket=pulseaudio
-  - --socket=system-bus
   - --share=network
   - --share=ipc
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --socket=pulseaudio
   - --device=all
-  - --talk-name=org.freedesktop.ScreenSaver
+  # MPRIS media controls (os_media_controls)
+  - --own-name=org.mpris.MediaPlayer2.com_edde746_plezy
+  # Connectivity checks (connectivity_plus via NetworkManager)
+  - --system-talk-name=org.freedesktop.NetworkManager
+  # MPRIS cover art, written to $XDG_RUNTIME_DIR for the desktop shell to read
+  - --filesystem=xdg-run/os_media_controls_artwork:create
+  # Discord Rich Presence: native Discord sockets...
+  - --filesystem=xdg-run/discord-ipc-0
+  - --filesystem=xdg-run/discord-ipc-1
+  - --filesystem=xdg-run/discord-ipc-2
+  - --filesystem=xdg-run/discord-ipc-3
+  - --filesystem=xdg-run/discord-ipc-4
+  - --filesystem=xdg-run/discord-ipc-5
+  - --filesystem=xdg-run/discord-ipc-6
+  - --filesystem=xdg-run/discord-ipc-7
+  - --filesystem=xdg-run/discord-ipc-8
+  - --filesystem=xdg-run/discord-ipc-9
+  # ...and Flatpak Discord's sockets, linked into place by /app/bin/plezy
+  - --filesystem=xdg-run/app/com.discordapp.Discord:ro
+  - --env=GTK_USE_PORTAL=1
 cleanup:
   - /bin/cargo-c
   - /bin/cargo-cinstall
@@ -268,6 +287,15 @@ modules:
       - |
         cat > /app/bin/plezy << 'EOF'
         #!/bin/bash
+        # dart_discord_presence looks in $XDG_RUNTIME_DIR, while Flatpak Discord
+        # publishes its sockets under its app directory. Never replace a native socket.
+        for index in 0 1 2 3 4 5 6 7 8 9; do
+            socket="discord-ipc-$index"
+            discord_socket="$XDG_RUNTIME_DIR/app/com.discordapp.Discord/$socket"
+            if [ ! -e "$XDG_RUNTIME_DIR/$socket" ] && [ -S "$discord_socket" ]; then
+                ln -sf "$discord_socket" "$XDG_RUNTIME_DIR/$socket"
+            fi
+        done
         cd /app/opt/plezy
         exec ./plezy "$@"
         EOF
