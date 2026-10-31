@@ -5,16 +5,18 @@
                 {
                     "type": "git",
                     "url": "https://github.com/getsentry/sentry-native.git",
-                    "tag": "0.13.3",
+                    "tag": "0.16.6",
+                    "commit": "672b86c77c1864e1c0b5e72eefadc078e30ef700",
                     "dest": "sentry-native-src"
                 },
                 {
                     "type": "shell",
                     "commands": [
-                        "SENTRY_CMAKE=$(find .pub-cache/git/sentry-dart-*/packages/flutter/linux/CMakeLists.txt 2>/dev/null | head -1) && sed -i '1s|^|set(FETCHCONTENT_FULLY_DISCONNECTED ON)\\nset(FETCHCONTENT_SOURCE_DIR_SENTRY-NATIVE \"/run/build/plezy/sentry-native-src\")\\n|' \"$SENTRY_CMAKE\""
+                        "SENTRY_CMAKE=$(ls .pub-cache/hosted/pub.dev/sentry_flutter-*/linux/CMakeLists.txt .pub-cache/git/sentry-dart-*/packages/flutter/linux/CMakeLists.txt 2>/dev/null | head -1) && test -n \"$SENTRY_CMAKE\" && sed -i '1s|^|set(FETCHCONTENT_FULLY_DISCONNECTED ON)\\nset(FETCHCONTENT_SOURCE_DIR_SENTRY-NATIVE \"/run/build/plezy/sentry-native-src\")\\n|' \"$SENTRY_CMAKE\""
                     ]
                 }
             ]
         }
-    }
+    },
+    "sqlite3": {}
 }
