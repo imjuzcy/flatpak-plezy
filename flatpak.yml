@@ -85,8 +85,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/mpv-player/mpv.git
-        tag: v0.41.0
-        commit: 41f6a645068483470267271e1d09966ca3b9f413
+        tag: v0.42.0
+        commit: b0841e8c4d156b8403dc1876c4cbd9011eb583f3
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)$
@@ -99,8 +99,8 @@ modules:
         sources:
           - type: git
             url: https://github.com/vcrhonek/hwdata.git
-            tag: v0.412
-            commit: 816a9490ffcdad1929e0e53f79c500e1aeadd492
+            tag: v0.413
+            commit: 1cf7032160ad57e2eaad36c4f23eede1edd8203b
             x-checker-data:
               type: git
               tag-pattern: ^v([\d.]+)$
@@ -188,8 +188,8 @@ modules:
         sources:
           - type: git
             url: https://github.com/fribidi/fribidi.git
-            tag: v1.0.17
-            commit: b93119f5fdc7ea47672cc304c1455ffa6dfe7536
+            tag: v1.0.18
+            commit: 15393e4937aa95bcf865d92143735746aeb654fa
             x-checker-data:
               type: git
               tag-pattern: ^v([\d.]+)$
@@ -306,8 +306,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/edde746/plezy.git
-        tag: 2.25.0
-        commit: c30493435ca98e7f521b89ecd8d096484d237c57
+        tag: 2.26.0
+        commit: 671a0d7b7bf7dacf37dc4a6086b6a9c0734904f7
         x-checker-data:
           type: git
           tag-pattern: ^([\d]+\.[\d]+\.[\d]+)$
@@ -336,9 +336,9 @@ modules:
           - patches/plezy-Wno-error.patch
       - type: git
         url: https://github.com/flutter/flutter.git
-        tag: 3.47.8
+        tag: 3.47.9
         dest: flutter
         x-checker-data:
           type: git
           tag-pattern: ^([\d]+\.[\d]+\.[\d]+)$
-        commit: 737ba8f885dc774b53b442759999a312c9461e4e
+        commit: c197ca5199e9ee5661e865596c9c07294dfab51c
